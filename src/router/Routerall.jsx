@@ -20,9 +20,9 @@ function Routerall() {
   return (
     <Router>
         <Routes>
-            <Route path="/" element={<HomeRoutes />}>
+            <Route path="/Home" element={<HomeRoutes />}>
               <Route index element={<HomePageWebsite />} />
-              <Route path="/registeruser" element={<RegisterPage />} />
+              <Route path="/Home/registeruser" element={<RegisterPage />} />
               <Route path="/Login" element={<LoginPage />} />
             </Route>
             

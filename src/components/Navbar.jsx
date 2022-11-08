@@ -23,11 +23,11 @@ function NavbarHome() {
                 <a href="#contact">
                     <button className="font-medium block mb-2 md:mb-0">Contact Us</button>
                 </a>
-                <a href="/registeruser">
+                <a href="/Home/registeruser">
                     <button className="bg-blue-400 px-3 py-1 text-white uppercase hover:bg-blue-300 md:hidden">Get started</button>
                 </a>
             </div>
-            <a href="/registeruser">
+            <a href="/Home/registeruser">
                 <button className="bg-blue-400 px-3 py-1 text-white uppercase hover:bg-blue-300 hidden md:inline">
                     Get started
                 </button>
