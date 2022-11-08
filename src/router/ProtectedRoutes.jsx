@@ -13,21 +13,4 @@ export default function ProtectedRoutes() {
     }    
 
     return <Outlet />
-
-    // if (Auth.isAuthorization[2] && Auth.isAuthorization[0] === 'user') {
-    //     return <Outlet />
-    // } 
-
-    // if (Auth.isAuthorization[2] && Auth.isAuthorization[0] === 'admin') {
-    //     return <Navigate to="/Admin" replace />
-    // }
-
-    // return <Navigate to="/" replace />    
-
-    // if (Auth.isAuthorization[2] && Auth.isAuthorization[0] === 'user') {
-    //     const name = Auth.isAuthorization[1]
-    //     return <Outlet context={name} />
-    // }
-
-    // return navigate('/', { replace: true })
 }
