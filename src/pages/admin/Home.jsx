@@ -5,6 +5,7 @@ import { GET_PASLON_FOR_ADMIN, DELETE_PASLON_DATA, SUBSCRIBE_PASLON } from "../.
 import updateIcon from "../../assets/update.svg"
 import deleteIcon from "../../assets/delete.svg"
 import { Link } from "react-router-dom"
+import swal from "sweetalert"
 
 function HomePage() {
   const { data, loading } = useSubscription(SUBSCRIBE_PASLON)
@@ -13,20 +14,37 @@ function HomePage() {
   })
 
   const handleDelete = async (deleteImage, deleteID) => {
-    const desertRef = ref(storage, deleteImage);
-
-    // Delete the file
-    await deleteObject(desertRef).then(() => {
-      console.log("image deleted")
-    }).catch((error) => {
-      console.log(error)
-    });
-
-    await deletePaslon({
-      variables: {
-        idDelete: deleteID
-      }
+    swal({
+      title: "Are you sure?",
+      text: "Apakah anda yakin untuk menghapus kandidat ini",
+      icon: "warning",
+      buttons: true,
+      dangerMode: true,
     })
+    .then((willDelete) => {
+      if (willDelete) {
+          const desertRef = ref(storage, deleteImage);
+
+          // Delete the file
+          deleteObject(desertRef).then(() => {
+            console.log("image deleted")
+          }).catch((error) => {
+            console.log(error)
+          });
+
+          deletePaslon({
+            variables: {
+              idDelete: deleteID
+            }
+          })
+          
+          swal("Kandidat berhasil dihapus", {
+            icon: "success",
+          });
+      } else {
+        swal("Kandidat masih tersimpan");
+      }
+    });
   }
 
   if (loading || loadingDelete) {

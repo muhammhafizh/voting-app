@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom"
 import { INSERT_PASLON_DATA } from "../../apollo/Paslon"
 import { useMutation } from "@apollo/client"
 import { uuidv4 } from "@firebase/util"
+import swal from "sweetalert"
 
 function CandidatePage() {
   const [ insertPaslon ] = useMutation(INSERT_PASLON_DATA)
@@ -42,6 +43,7 @@ function CandidatePage() {
             imageFileName: fileName
           }
         })
+        swal("Success", "Data kandidat berhasil ditambahkan", "success")
         navigate('/Admin')
       }).catch(err => console.log(err))
     }).catch(err => console.log(err))

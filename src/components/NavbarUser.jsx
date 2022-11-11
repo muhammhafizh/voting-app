@@ -2,6 +2,7 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import hamburgerMenu from "../assets/hamburger.svg"
 import { Auth } from "../utils/Auth"
+import logout from "../assets/LogoutUser.svg"
 
 function NavbarUserPage({ name }) {
     const [open, setOpen] = useState(false)
@@ -30,8 +31,8 @@ function NavbarUserPage({ name }) {
             <span className="uppercase my-2 mx-2 hidden md:inline">
                 hello {name}
             </span>
-            <button onClick={() => Auth.signOut(navigate)} className="bg-red-400 px-3 py-1 text-white uppercase hover:bg-red-300 hidden md:inline ">
-                Log Out
+            <button onClick={() => Auth.signOut(navigate)} className="hidden md:inline rounded-md cursor-pointer">
+               <img src={logout} className="h-6" />
             </button>
         </div>
     </header>

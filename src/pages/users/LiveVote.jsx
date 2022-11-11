@@ -1,21 +1,29 @@
 import { SUBSCRIBE_PASLON } from "../../apollo/Paslon"
-import { useSubscription } from "@apollo/client"
+import { useQuery, useSubscription } from "@apollo/client"
 import NavbarUserPage from "../../components/NavbarUser";
+import { GET_USER_BY_ID } from "../../apollo/User";
+import { Auth } from "../../utils/Auth";
 
 function LiveVotePage() {
+    const idUser = Auth.getUserID()
     const { data, loading } = useSubscription(SUBSCRIBE_PASLON)
+    const { data: dataUser, loading: loadingUser } = useQuery(GET_USER_BY_ID, {
+      variables: { idUser }}
+    )
 
-    if (loading) {
-        return <h1 className="text-orange-400">Please Wait</h1>
-      }
+    if (loading || loadingUser) {
+      return <h1 className="text-orange-400">Please Wait</h1>
+    }
+
+    const name = dataUser.results[0].username
     
-      if (data?.mini_project_paslon.length === 0) {
-        return <h1 className="text-red-400">Maaf Kandidat tidak tersedia</h1>
-      }
+    if (data?.mini_project_paslon.length === 0) {
+      return <h1 className="text-red-400">Maaf Kandidat tidak tersedia</h1>
+    }
 
   return (
     <>
-        <NavbarUserPage />
+        <NavbarUserPage name={name} />
         <div className="block md:flex w-full">
         {data?.mini_project_paslon.map((paslon) => {
           return (

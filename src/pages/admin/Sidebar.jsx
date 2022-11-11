@@ -6,6 +6,7 @@ import candidate from "../../assets/Candidate.svg"
 import users from "../../assets/Users.svg"
 import admin from "../../assets/Admin.svg"
 import control from "../../assets/control.png"
+import logout from "../../assets/LogoutAdmin.svg"
 
 function SidebarPage() {
     const navigate = useNavigate()
@@ -13,7 +14,7 @@ function SidebarPage() {
     const Menus = [
       { title: "Home", src: home, element: "Admin" },
       { title: "Candidate", src: candidate, element: "Admin/Candidate"  },
-      { title: "Users", src: users, element: "Admin/Users"  }
+      { title: "Users", src: users, element: "Admin/Users"  },
     ];
 
     const path = window.location.pathname
@@ -58,7 +59,10 @@ function SidebarPage() {
               </a>
             ))}
           </ul>
-          <button onClick={() => Auth.signOut(navigate)} className="bg-red-400 sm:px-1 px-3 py-1 text-white uppercase hover:bg-red-300 mt-80 pr-2 md:ml-2">Log Out</button>
+          <button onClick={() => Auth.signOut(navigate)} className="mt-20 flex rounded-md p-2 cursor-pointer hover:bg-blue-400 hover:text-white text-gray-300 text-sm items-center gap-x-4 mt-2'">
+            <img src={logout} className="h-6" />
+            <span className={`${!open && "hidden"} origin-left duration-200`}>Log Out</span>
+          </button>
       </div>
     );
 }

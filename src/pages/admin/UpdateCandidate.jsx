@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom"
 import { UPDATE_PASLON } from "../../apollo/Paslon";
 import { useMutation } from "@apollo/client"
+import swal from "sweetalert";
 
 function UpdateCandidatePage() {
     const [ updatePaslon ] = useMutation(UPDATE_PASLON)
@@ -40,6 +41,7 @@ function UpdateCandidatePage() {
           }
         })
 
+        swal("Success", "Data kandidat berhasil di update", "success");
         navigate('/Admin')
     }
 

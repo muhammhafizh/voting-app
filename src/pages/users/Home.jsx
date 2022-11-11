@@ -4,6 +4,7 @@ import { Link } from "react-router-dom"
 import NavbarUserPage from "../../components/NavbarUser";
 import { GET_USER_BY_ID, USER_VOTING } from "../../apollo/User";
 import { Auth } from "../../utils/Auth";
+import swal from "sweetalert";
 
 function HomeUsers() {
   const idUser = Auth.getUserID()
@@ -30,6 +31,7 @@ function HomeUsers() {
       }
     })
 
+    swal("Success", "Selamat anda berhasil voting", "success");
     refetch()
   }
 
