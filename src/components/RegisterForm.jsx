@@ -4,6 +4,7 @@ import { INSERT_USER } from "../apollo/User"
 import eyesOpen from "../assets/eyesopen.svg"
 import eyesClosed from "../assets/eyesclosed.svg"
 import { useState } from "react"
+import bcryptjs from "bcryptjs"
 
 function RegisterForm() {
   const [open, setOpen] = useState(true)
@@ -41,10 +42,12 @@ function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault()
 
+    const hashPassword = bcryptjs.hashSync(data.userPassword, 10);
+
     await insertUser({
       variables: {
         username: data.name,
-        password: data.userPassword
+        password: hashPassword
       }
     })
     

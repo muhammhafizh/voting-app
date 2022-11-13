@@ -3,7 +3,7 @@ import { Auth } from "../utils/Auth"
 import { Outlet, Navigate } from "react-router-dom";
 
 export default function PrivateRoutes() {
-    const { role, username, token } = Auth.isAuthorization()
+    const { role, token } = Auth.isAuthorization()
 
     if (!token) {
         return <Navigate to="/" replace />

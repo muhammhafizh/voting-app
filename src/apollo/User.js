@@ -1,7 +1,7 @@
 import { gql } from '@apollo/client';
 
 export const INSERT_USER = gql`
-    mutation insertUsers($username: String, $password: bpchar) {
+    mutation insertUsers($username: String!, $password: bpchar!) {
         insert_mini_project_users_one(object: {isUserVoted: false, role: "user", username: $username, password: $password}) {
         username
         password
@@ -10,12 +10,12 @@ export const INSERT_USER = gql`
 `
 
 export const GET_DATA_FOR_LOGIN = gql`
-    query getUsernameForUser($username: String, $password: bpchar) {
-        mini_project_users(where: {username: {_eq: $username}, password: {_eq: $password}}) {
-        id
-        username
-        isUserVoted
+    query getUserDataForLogin($username: String!) {
+        mini_project_users(where: {username: {_eq: $username}}) {
+        password
         role
+        isUserVoted
+        id
         }
     }
 `

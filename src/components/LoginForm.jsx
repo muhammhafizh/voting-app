@@ -1,10 +1,11 @@
 import { Link, useNavigate } from "react-router-dom"
 import eyesOpen from "../assets/eyesopen.svg"
 import eyesClosed from "../assets/eyesclosed.svg"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef } from "react"
 import { useLazyQuery } from "@apollo/client"
 import { Auth } from "../utils/Auth"
 import { GET_DATA_FOR_LOGIN } from "../apollo/User"
+import bcryptjs from "bcryptjs"
 
 function LoginFormPage() {
   const [open, setOpen] = useState(true)
@@ -21,20 +22,22 @@ function LoginFormPage() {
     const userData = await getData({
       variables: {
         username: username.current?.value,
-        password: password.current?.value
       }
     })
 
+    const checkPassword = bcryptjs.compareSync(password.current?.value, userData.data.mini_project_users[0].password)
+
+    if (checkPassword === false){
+      setErrorMessage("Silahkan masukan username dan password yang benar")
+    }
+
     const loginData = await userData.data.mini_project_users[0]
 
-    if (loginData.length === 0){
-      setErrorMessage("File tidak ditemukan")
-    }
     
     const dataLogin = await Auth.storeUserInfoToCookie(loginData)
 
     if (dataLogin.role === 'user') {
-      navigate('/User', { replace: true, state: {name: dataLogin.username, vote: dataLogin.isUserVoted, id: dataLogin.id} })
+      navigate('/User', { replace: true })
     } else {
       navigate('/Admin', { replace: true })
     }
