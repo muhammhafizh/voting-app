@@ -3,7 +3,7 @@ import LoginPage from "../pages/home/Login";
 import RegisterPage from "../pages/home/Register";
 
 import HomePage from "../pages/admin/Home";
-import CandidatePage from "../pages/admin/Candidate"
+import CandidatePage from "../pages/admin/Candidate";
 import UsersPage from "../pages/admin/Users";
 import UpdateCandidatePage from "../pages/admin/UpdateCandidate";
 
@@ -19,30 +19,33 @@ import LiveVotePage from "../pages/users/LiveVote";
 function Routerall() {
   return (
     <Router>
-        <Routes>
-            <Route path="/" element={<HomeRoutes />}>
-              <Route index element={<HomePageWebsite />} />
-              <Route path="/Register" element={<RegisterPage />} />
-              <Route path="/Login" element={<LoginPage />} />
-            </Route>
-            
-            {/* Admin Page */}
-            <Route path="/Admin" element={<PrivateRoutes />}>
-                <Route index element={<HomePage />} />
-                <Route path='/Admin/Candidate' element={<CandidatePage />} />
-                <Route path='/Admin/Users' element={<UsersPage />} />
-                <Route path='/Admin/UpdateCandidate' element={<UpdateCandidatePage />} />
-            </Route>
+      <Routes>
+        <Route path="/" element={<HomeRoutes />}>
+          <Route index element={<HomePageWebsite />} />
+          <Route path="/Register" element={<RegisterPage />} />
+          <Route path="/Login" element={<LoginPage />} />
+        </Route>
 
-            {/* User Page */}
-            <Route path="/User" element={<ProtectedRoutes />}>
-              <Route index element={<HomeUsers />} />
-              <Route path="/User/VisiMisi" element={<VisiMisiPage />} />
-              <Route path="/User/LiveVote" element={<LiveVotePage />} />
-            </Route>
-        </Routes>
+        {/* Admin Page */}
+        <Route path="/Admin" element={<PrivateRoutes />}>
+          <Route index element={<HomePage />} />
+          <Route path="/Admin/Candidate" element={<CandidatePage />} />
+          <Route path="/Admin/Users" element={<UsersPage />} />
+          <Route
+            path="/Admin/UpdateCandidate/:id"
+            element={<UpdateCandidatePage />}
+          />
+        </Route>
+
+        {/* User Page */}
+        <Route path="/User" element={<ProtectedRoutes />}>
+          <Route index element={<HomeUsers />} />
+          <Route path="/User/VisiMisi" element={<VisiMisiPage />} />
+          <Route path="/User/LiveVote" element={<LiveVotePage />} />
+        </Route>
+      </Routes>
     </Router>
-  )
+  );
 }
 
-export default Routerall
+export default Routerall;
