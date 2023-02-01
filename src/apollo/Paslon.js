@@ -107,14 +107,27 @@ export const PASLON_GET_VOTED = gql`
 `;
 
 export const GET_PASLON_BY_ID = gql`
-  query getPaslonById($id: Int!) {
+  subscription getPaslonById($id: Int!) {
     mini_project_paslon(where: { id: { _eq: $id } }) {
-      nama_wakil
-      nama_ketua
-      visi
-      misi
-      imageUrl
       imageFileName
+      imageUrl
+      misi
+      nama_ketua
+      nama_wakil
+      visi
+    }
+  }
+`;
+
+export const UPDATE_IMAGE_PASLON = gql`
+  mutation updateImagePaslon($id: Int, $imageUrl: bpchar) {
+    update_mini_project_paslon(
+      where: { id: { _eq: $id } }
+      _set: { imageUrl: $imageUrl }
+    ) {
+      returning {
+        imageUrl
+      }
     }
   }
 `;

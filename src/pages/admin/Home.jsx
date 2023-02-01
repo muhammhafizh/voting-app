@@ -82,16 +82,7 @@ function HomePage() {
                       <span className="ml-2">{paslon.total_voted}</span>
                     </span>
                     <div className="flex mt-3">
-                      <Link
-                        to={`/Admin/UpdateCandidate/${paslon.id}`}
-                        // state={{
-                        //   id: paslon.id,
-                        //   visi: paslon.visi,
-                        //   misi: paslon.misi,
-                        //   ketua: paslon.nama_ketua,
-                        //   wakil: paslon.nama_wakil,
-                        // }}
-                      >
+                      <Link to={`/Admin/UpdateCandidate/${paslon.id}`}>
                         <button
                           type="button"
                           className="inline-block rounded-full bg-blue-300 leading-normal shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out w-9 h-9"
