@@ -98,6 +98,7 @@ function UpdateCandidatePage() {
               imageUrl: url,
             },
           });
+          swal("Success", "Gambar kandidat berhasil di update", "success");
         })
         .catch((err) => console.log(err));
     });

@@ -1,11 +1,7 @@
 import { storage } from "../../firebase/Firebase";
 import { ref, deleteObject } from "firebase/storage";
 import { useMutation, useSubscription } from "@apollo/client";
-import {
-  GET_PASLON_FOR_ADMIN,
-  DELETE_PASLON_DATA,
-  SUBSCRIBE_PASLON,
-} from "../../apollo/Paslon";
+import { DELETE_PASLON_DATA, SUBSCRIBE_PASLON } from "../../apollo/Paslon";
 import updateIcon from "../../assets/update.svg";
 import deleteIcon from "../../assets/delete.svg";
 import { Link } from "react-router-dom";
@@ -13,12 +9,8 @@ import swal from "sweetalert";
 
 function HomePage() {
   const { data, loading } = useSubscription(SUBSCRIBE_PASLON);
-  const [deletePaslon, { loading: loadingDelete }] = useMutation(
-    DELETE_PASLON_DATA,
-    {
-      refetchQueries: [GET_PASLON_FOR_ADMIN],
-    }
-  );
+  const [deletePaslon, { loading: loadingDelete }] =
+    useMutation(DELETE_PASLON_DATA);
 
   const handleDelete = async (deleteImage, deleteID) => {
     swal({

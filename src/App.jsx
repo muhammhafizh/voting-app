@@ -1,3 +1,4 @@
+// import ForgotPassword from "./pages/home/ForgotPassword";
 import Routerall from "./router/Routerall";
 
 function App() {
@@ -8,4 +9,4 @@ function App() {
   );
 }
 
-export default App
+export default App;

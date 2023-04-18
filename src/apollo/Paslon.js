@@ -1,15 +1,5 @@
 import { gql } from "@apollo/client";
 
-export const GET_PASLON_FOR_ADMIN = gql`
-  query getPaslonForAdmin {
-    mini_project_paslon {
-      imageFileName
-      imageUrl
-      id
-    }
-  }
-`;
-
 export const INSERT_PASLON_DATA = gql`
   mutation insert_paslon(
     $nama_ketua: String
