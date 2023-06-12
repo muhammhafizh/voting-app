@@ -9,11 +9,14 @@ import swal from "sweetalert";
 
 function CandidatePage() {
   const [insertPaslon] = useMutation(INSERT_PASLON_DATA);
+
+  const options = ["BEM", "HIMA", "DPM"];
   const image = useRef(null);
   const nama_ketua = useRef();
   const nama_wakil = useRef();
   const visi = useRef();
   const misi = useRef();
+  const jenisPaslon = useRef(null);
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
@@ -41,6 +44,7 @@ function CandidatePage() {
                 misi: misi.current?.value,
                 imageUrl: url,
                 imageFileName: fileName,
+                jenis_paslon: jenisPaslon?.current?.value,
               },
             });
             swal("Success", "Data kandidat berhasil ditambahkan", "success");
@@ -100,6 +104,23 @@ function CandidatePage() {
               ref={misi}
               className="border border-gray-300 focus:outline-none bg-gray-200 text-gray-400 focus:border-sky-500 px-3 py-2 md:w-60 focus:bg-white focus:text-black"
             />
+          </div>
+          <div className="mb-3 md:mb-4">
+            <label className="uppercase text-gray-400 font-bold mb-2 block">
+              Jenis Paslon
+            </label>
+            <select
+              className="border border-gray-300 bg-gray-200 text-gray-400 w-52 md:w-60 p-3"
+              ref={jenisPaslon}
+            >
+              {options.map((optionValue, index) => {
+                return (
+                  <option key={index} value={optionValue}>
+                    {optionValue}
+                  </option>
+                );
+              })}
+            </select>
           </div>
           <button
             className="bg-violet-500 text-white px-3 py-2 hover:bg-violet-600"

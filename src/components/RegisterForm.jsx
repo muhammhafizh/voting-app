@@ -1,31 +1,58 @@
-import { useMutation } from "@apollo/client";
+import React from "react";
+import { useMutation, useSubscription } from "@apollo/client";
 import { useNavigate } from "react-router-dom";
-import { INSERT_USER } from "../apollo/User";
+import { GET_NIM_USERS, INSERT_USER } from "../apollo/User";
 import eyesOpen from "../assets/eyesopen.svg";
 import eyesClosed from "../assets/eyesclosed.svg";
 import warning from "../assets/warning.svg";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import bcryptjs from "bcryptjs";
 import { OCR } from "../utils/GetText";
-import * as ml5 from "ml5";
-import * as mobilenet from "@tensorflow-models/mobilenet";
+import ml5 from "ml5";
 
 function RegisterForm() {
   const [open, setOpen] = useState(true);
   const [insertUser] = useMutation(INSERT_USER);
+  const { data: dataUsers, loading: loadingUsers } =
+    useSubscription(GET_NIM_USERS);
   const navigate = useNavigate();
   const [image, setImage] = useState("");
   const imageRef = useRef();
+  const prodi = useRef();
+  const [isImage, setIsImage] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [imageData, setImageData] = useState([]);
+  var dataImage;
+  const dataUsersInDB = [];
 
   useEffect(() => {
-    async function setup() {
-      // let imageModelURL =
-      //   "https://teachablemachine.withgoogle.com/models/GoWMynpAh/model.json";
-      let classifier = await ml5.imageClassifier("MobileNet");
-      console.log(classifier);
+    let data = true;
+
+    if (data) {
+      const fileImage = document.getElementById("classific_image_id");
+      if (image.length > 0) {
+        // No callback needs to be passed to use Promises.
+        ml5
+          .imageClassifier(
+            "https://teachablemachine.withgoogle.com/models/2RFDRfRIy/model.json"
+          )
+          .then((classifier) => classifier.predict(fileImage))
+          .then((results) => {
+            // Do something with the results
+            imageData.push(results);
+            dataImage = results;
+          });
+      }
     }
-    setup();
-  }, []);
+
+    return () => {
+      data = false;
+    };
+  }, [isImage]);
+
+  dataUsers?.mini_project_users?.map((dt) => {
+    dataUsersInDB.push(dt.nim);
+  });
 
   const baseData = [
     {
@@ -102,37 +129,77 @@ function RegisterForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    console.log(image);
-    //await OCR(image);
-    //classifyImg(imageRef.current);
-    // data.map((dt) => {
-    //   if (dt.isError === true) {
-    //     alert(`Data error pada bagian ${dt.name}`);
-    //   }
+    data.map((dt) => {
+      if (dt.isError === true) {
+        alert(`Data error pada bagian ${dt.name}`);
+      }
 
-    //   if (dt.value === "") {
-    //     alert(`Silahkan masukan data pada bagian ${dt.name}`);
-    //   }
-    // });
+      if (dt.value === "") {
+        alert(`Silahkan masukan data pada bagian ${dt.name}`);
+      }
+    });
 
-    // if (password === "") {
-    //   alert("Please enter your password");
-    // }
+    if (image === "") {
+      alert("Mohon masukan foto SIA anda");
+    } else if (dataUsersInDB.includes(Number(data[1].value))) {
+      alert("Data Anda sudah terdaftar");
+    } else if (password === "") {
+      alert("Please enter your password");
+    } else {
+      setTimeout(() => {
+        setIsLoading(true);
+      }, 1);
 
-    // const hashPassword = bcryptjs.hashSync(password, 10);
+      setIsImage(true);
 
-    // await insertUser({
-    //   variables: {
-    //     username: data.name,
-    //     password: hashPassword,
-    //   },
-    // });
+      setTimeout(async () => {
+        const usernames = data[0].value.toLowerCase(),
+          nim = data[1].value,
+          programStudi = prodi?.current?.value,
+          email = data[2].value;
 
-    // navigate("/Login");
+        const { name, nimMahasiswa, program } = await OCR(
+          image,
+          usernames,
+          nim,
+          programStudi
+        );
+
+        // console.log(name, nimMahasiswa, program);
+        // console.log(imageData[0]);
+
+        const hashPassword = bcryptjs.hashSync(password, 10);
+
+        if (
+          name &&
+          nimMahasiswa &&
+          program &&
+          imageData[0]?.[0]?.label === "SIA"
+        ) {
+          await insertUser({
+            variables: {
+              username: usernames,
+              password: hashPassword,
+              email: email,
+              nim: nim,
+              Prodi: programStudi,
+            },
+          });
+
+          navigate("/Login");
+        } else {
+          alert("Mohon Masukan foto SIA anda dengan gambar yang berkualitas");
+        }
+
+        setIsImage(false);
+        setIsLoading(false);
+      }, 20000);
+    }
   };
 
   return (
     <section>
+      {isLoading && <h1>Hello</h1>}
       <div className="container mx-auto py-10 block">
         <h1 className="text-center font-bold text-2xl uppercase">
           welcome to u<span className="text-blue-300">vote</span>
@@ -168,7 +235,16 @@ function RegisterForm() {
               </div>
             );
           })}
-
+          <div className="mx-auto text-left w-64 md:w-96">
+            <select
+              className="border border-gray-300 bg-gray-200 text-gray-400 w-64 md:w-96 p-3"
+              ref={prodi}
+            >
+              <option>Masukan Prodi anda</option>
+              <option value="teknik informatika">Teknik Informatika</option>
+              <option value="sistem informasi">Sistem Informasi</option>
+            </select>
+          </div>
           <div className="mx-auto border border-gray-300 bg-gray-200 text-gray-400 w-64 md:w-96 p-3 text-left flex">
             <input
               value={password}
@@ -199,6 +275,7 @@ function RegisterForm() {
               onChange={(e) => setImage(URL.createObjectURL(e.target.files[0]))}
               ref={imageRef}
             />
+            <img src={image} id="classific_image_id" className="hidden" />
           </div>
           <div>
             <button

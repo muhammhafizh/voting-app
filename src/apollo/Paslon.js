@@ -8,6 +8,7 @@ export const INSERT_PASLON_DATA = gql`
     $misi: String
     $imageFileName: bpchar
     $imageUrl: bpchar
+    $jenis_paslon: String
   ) {
     insert_mini_project_paslon_one(
       object: {
@@ -17,16 +18,19 @@ export const INSERT_PASLON_DATA = gql`
         misi: $misi
         imageFileName: $imageFileName
         imageUrl: $imageUrl
-        total_voted: 0
+        total_vote: 0
+        jenis_paslon: $jenis_paslon
       }
     ) {
+      id
       nama_ketua
       nama_wakil
       visi
       misi
       imageUrl
       imageFileName
-      total_voted
+      total_vote
+      jenis_paslon
     }
   }
 `;
@@ -48,11 +52,12 @@ export const SUBSCRIBE_PASLON = gql`
       imageUrl
       imageFileName
       id
-      total_voted
+      total_vote
       misi
       visi
       nama_ketua
       nama_wakil
+      jenis_paslon
     }
   }
 `;
@@ -64,6 +69,7 @@ export const UPDATE_PASLON = gql`
     $nama_wakil: String
     $misi: String
     $visi: String
+    $jenis_paslon: String
   ) {
     update_mini_project_paslon_by_pk(
       pk_columns: { id: $id }
@@ -72,12 +78,14 @@ export const UPDATE_PASLON = gql`
         nama_wakil: $nama_wakil
         misi: $misi
         visi: $visi
+        jenis_paslon: $jenis_paslon
       }
     ) {
       nama_ketua
       nama_wakil
       misi
       visi
+      jenis_paslon
     }
   }
 `;
@@ -86,7 +94,7 @@ export const PASLON_GET_VOTED = gql`
   mutation paslonGetVote($idPaslon: Int!, $total_voted: Int!) {
     update_mini_project_paslon(
       where: { id: { _eq: $idPaslon } }
-      _set: { total_voted: $total_voted }
+      _set: { total_vote: $total_voted }
     ) {
       returning {
         nama_ketua
@@ -105,6 +113,7 @@ export const GET_PASLON_BY_ID = gql`
       nama_ketua
       nama_wakil
       visi
+      jenis_paslon
     }
   }
 `;
@@ -118,6 +127,46 @@ export const UPDATE_IMAGE_PASLON = gql`
       returning {
         imageUrl
       }
+    }
+  }
+`;
+
+export const PASLON_ID = gql`
+  subscription getPaslonID {
+    mini_project_paslon(order_by: { id: desc }) {
+      id
+      jenis_paslon
+    }
+  }
+`;
+
+export const GET_PASLON_IN_VOTING = gql`
+  subscription getPaslonInVoting {
+    mini_project_voting(where: { paslon_id: { _is_null: false } }) {
+      paslon_id
+    }
+  }
+`;
+
+export const INSERT_PASLON_IN_VOTING = gql`
+  mutation insertPaslonInVoting(
+    $objects: [mini_project_voting_insert_input!]!
+  ) {
+    insert_mini_project_voting(objects: $objects) {
+      returning {
+        paslon_id
+        user_id
+        isUserVoted
+        status_paslon
+      }
+    }
+  }
+`;
+
+export const GET_PASLON_FROM_NAME = gql`
+  query getPaslonFromID($id: order_by = desc) {
+    mini_project_paslon(order_by: { id: $id }) {
+      id
     }
   }
 `;

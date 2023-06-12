@@ -14,7 +14,7 @@ function SidebarPage() {
   const Menus = [
     { title: "Home", src: home, element: "Admin" },
     { title: "Candidate", src: candidate, element: "Admin/Candidate" },
-    { title: "Data Mahasiswa", src: users, element: "Admin/Users" },
+    // { title: "Data Mahasiswa", src: users, element: "Admin/Users" },
   ];
 
   const path = window.location.pathname;

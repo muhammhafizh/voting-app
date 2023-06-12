@@ -2,20 +2,37 @@ import { PASLON_GET_VOTED, SUBSCRIBE_PASLON } from "../../apollo/Paslon";
 import { useMutation, useQuery, useSubscription } from "@apollo/client";
 import { Link } from "react-router-dom";
 import NavbarUserPage from "../../components/NavbarUser";
-import { GET_USER_BY_ID, USER_VOTING } from "../../apollo/User";
+import {
+  GET_USER_BY_ID,
+  USER_VOTING,
+  GET_USER_USING_ID,
+} from "../../apollo/User";
 import { Auth } from "../../utils/Auth";
 import swal from "sweetalert";
 
 function HomeUsers() {
   const idUser = Auth.getUserID();
   const { data, loading } = useSubscription(SUBSCRIBE_PASLON);
-  const {
-    data: dataUser,
-    loading: loadingUser,
-    refetch,
-  } = useQuery(GET_USER_BY_ID, {
+  const { data: dataUser, loading: loadingUser } = useQuery(GET_USER_BY_ID, {
     variables: { idUser },
   });
+
+  const {
+    data: dataUserContoh,
+    loading: loadingUserContoh,
+    refetch,
+  } = useQuery(GET_USER_USING_ID, {
+    variables: { idUser },
+  });
+
+  const paslonVoted = [];
+
+  const NewData = dataUserContoh?.mini_project_voting?.filter(
+    (vote) => vote.isUserVoted === true
+  );
+
+  NewData?.map((dt) => paslonVoted.push(dt.status_paslon));
+
   const [userVoted] = useMutation(USER_VOTING);
   const [paslonGetVoted] = useMutation(PASLON_GET_VOTED);
 
@@ -28,10 +45,11 @@ function HomeUsers() {
       },
     });
 
-    //Mutation table user where id = idUser, set isVoted = true
+    //Mutation table voting where user_id = idUser and set isVoted = true
     await userVoted({
       variables: {
-        idUser: idUser,
+        user_id: idUser,
+        paslon_id: paslonID,
       },
     });
 
@@ -39,14 +57,13 @@ function HomeUsers() {
     refetch();
   };
 
-  if (loading || loadingUser) {
+  if (loadingUserContoh == undefined || loadingUserContoh == true) {
     return <h1 className="text-orange-400">Please Wait</h1>;
   }
 
-  const vote = dataUser.results[0].isUserVoted;
-  const name = dataUser.results[0].username;
+  const name = dataUserContoh?.mini_project_voting?.[0].voting_user.username;
 
-  if (data?.mini_project_paslon.length === 0) {
+  if (dataUserContoh?.mini_project_voting.length === 0) {
     return <h1 className="text-red-400">Maaf Kandidat tidak tersedia</h1>;
   }
 
@@ -54,29 +71,29 @@ function HomeUsers() {
     <>
       <NavbarUserPage name={name} />
       <div className="block md:flex w-full">
-        {data?.mini_project_paslon.map((paslon) => {
+        {dataUserContoh?.mini_project_voting?.map((paslon) => {
           return (
-            <div key={paslon.id}>
+            <div key={paslon.voting_paslon.id}>
               <div className="flex mb-10 mb-md:0 md:mr-10 m-10">
                 <div
                   className="rounded-lg shadow-xl bg-white max-w-sm"
-                  key={paslon.id}
+                  key={paslon.voting_paslon.id}
                 >
                   <img
                     className="rounded-t-lg"
-                    src={paslon.imageUrl}
-                    alt={`${paslon.nama_ketua} dan ${paslon.nama_wakil}`}
+                    src={paslon.voting_paslon.imageUrl}
+                    alt={`${paslon.voting_paslon.nama_ketua} dan ${paslon.voting_paslon.nama_wakil}`}
                   />
                   <div className="p-6" key={paslon.id}>
                     <div className="flex mt-3">
                       <Link
                         to="/User/VisiMisi"
                         state={{
-                          image: paslon.imageUrl,
-                          visi: paslon.visi,
-                          misi: paslon.misi,
-                          ketua: paslon.nama_ketua,
-                          wakil: paslon.nama_wakil,
+                          image: paslon.voting_paslon.imageUrl,
+                          visi: paslon.voting_paslon.visi,
+                          misi: paslon.voting_paslon.misi,
+                          ketua: paslon.voting_paslon.nama_ketua,
+                          wakil: paslon.voting_paslon.nama_wakil,
                         }}
                       >
                         <button
@@ -88,17 +105,30 @@ function HomeUsers() {
                       </Link>
                       <button
                         onClick={() =>
-                          handleSubmit(paslon.id, paslon.total_voted)
+                          handleSubmit(
+                            paslon.voting_paslon.id,
+                            paslon.voting_paslon.total_vote
+                          )
                         }
                         type="button"
                         className={` ${
-                          vote
+                          paslonVoted.includes(
+                            paslon.voting_paslon.jenis_paslon
+                          )
                             ? "inline-block bg-gray-600 leading-normal p-3 ml-4 text-white"
                             : "inline-block text-white font-semibold bg-green-500 leading-normal shadow-md hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg transition duration-150 ease-in-out p-3 ml-4"
                         } `}
-                        disabled={vote}
+                        disabled={
+                          paslonVoted.includes(
+                            paslon.voting_paslon.jenis_paslon
+                          )
+                            ? true
+                            : false
+                        }
                       >
-                        {vote ? "voted" : "vote"}
+                        {paslonVoted.includes(paslon.voting_paslon.jenis_paslon)
+                          ? "voted"
+                          : "vote"}
                       </button>
                     </div>
                   </div>

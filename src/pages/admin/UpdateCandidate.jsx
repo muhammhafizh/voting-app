@@ -11,6 +11,7 @@ import { storage } from "../../firebase/Firebase";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 function UpdateCandidatePage() {
+  const options = ["BEM", "HIMA", "DPM"];
   const { id } = useParams();
   const [updatePaslon] = useMutation(UPDATE_PASLON);
   const [updateImagePaslon] = useMutation(UPDATE_IMAGE_PASLON);
@@ -20,7 +21,7 @@ function UpdateCandidatePage() {
   });
   const [showModal, setShowModal] = useState(false);
   const imageUpdate = useRef(null);
-
+  const jenisPaslon = useRef(null);
   const baseData = {
     newKetua: "",
     newWakil: "",
@@ -28,6 +29,7 @@ function UpdateCandidatePage() {
     newMisi: "",
     imageCandidate: "",
     imageFileName: "",
+    paslonJenis: "",
   };
 
   const [newData, setNewData] = useState(baseData);
@@ -40,6 +42,7 @@ function UpdateCandidatePage() {
       newMisi: data?.mini_project_paslon[0]?.misi,
       imageCandidate: data?.mini_project_paslon[0]?.imageUrl,
       imageFileName: data?.mini_project_paslon[0]?.imageFileName,
+      paslonJenis: data?.mini_project_paslon[0]?.jenis_paslon,
     });
   }, [data]);
 
@@ -63,6 +66,7 @@ function UpdateCandidatePage() {
         nama_wakil: newData.newWakil,
         visi: newData.newVisi,
         misi: newData.newMisi,
+        jenis_paslon: jenisPaslon?.current?.value,
       },
     });
 
@@ -109,6 +113,13 @@ function UpdateCandidatePage() {
   if (loading || newData.newKetua === "") {
     return <h1>Please Wait</h1>;
   }
+
+  const fromIndex = options.indexOf(newData.paslonJenis);
+  const toIndex = 0;
+
+  const element = options.splice(fromIndex, 1)[0];
+
+  options.splice(toIndex, 0, element);
 
   return (
     <>
@@ -190,6 +201,25 @@ function UpdateCandidatePage() {
                 rows="3"
                 cols="35"
               />
+            )}
+          </div>
+          <div className="mb-3 md:mb-4">
+            <label className="uppercase text-gray-400 font-bold mb-2 block">
+              Jenis Paslon
+            </label>
+            {!showModal && (
+              <select
+                className="border border-gray-300 bg-gray-200 text-gray-400 w-64 md:w-72 p-3"
+                ref={jenisPaslon}
+              >
+                {options.map((optionValue, index) => {
+                  return (
+                    <option key={index} value={optionValue}>
+                      {optionValue}
+                    </option>
+                  );
+                })}
+              </select>
             )}
           </div>
           {!showModal && (

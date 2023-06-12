@@ -15,6 +15,8 @@ import ProtectedRoutes from "./ProtectedRoutes";
 import HomeRoutes from "./HomeRoutes";
 import HomePageWebsite from "../pages/home/Home";
 import LiveVotePage from "../pages/users/LiveVote";
+import ForgotPassword from "../pages/home/ForgotPassword";
+import ChangePassword from "../pages/home/ChangePassword";
 
 function Routerall() {
   return (
@@ -24,6 +26,8 @@ function Routerall() {
           <Route index element={<HomePageWebsite />} />
           <Route path="/Register" element={<RegisterPage />} />
           <Route path="/Login" element={<LoginPage />} />
+          <Route path="/ForgotPassword" element={<ForgotPassword />} />
+          <Route path="/ChangePassword/:id" element={<ChangePassword />} />
         </Route>
 
         {/* Admin Page */}

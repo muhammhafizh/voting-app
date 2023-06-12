@@ -1,20 +1,32 @@
 import React, { useRef } from "react";
 import emailjs from "@emailjs/browser";
+import { CHANGE_PASSWORD } from "../../apollo/User";
+import { useLazyQuery } from "@apollo/client";
+import { useNavigate } from "react-router-dom";
 
 function ForgotPassword() {
-  const email = useRef();
+  const nim = useRef();
+  const [getData] = useLazyQuery(CHANGE_PASSWORD);
+  const navigate = useNavigate();
 
-  const sendEmail = (e) => {
+  const sendEmail = async (e) => {
     e.preventDefault();
 
-    let URL = window.location.href.match(/login/g)
-      ? window.location.href.replace("Login", "Forgot_Password")
-      : window.location.href + "/Forgot_Password";
+    const userData = await getData({
+      variables: {
+        nim: nim.current?.value,
+      },
+    });
+
+    const { email, id, username } = userData?.data?.mini_project_users[0];
+
+    let URL =
+      window.location.href.replace("ForgotPassword", "ChangePassword/") + id;
 
     const templateParams = {
-      user_email: email.current?.value,
-      to_name: "hafizh",
-      message: `Open This URL ${URL}`,
+      user_email: email,
+      to_name: username,
+      message: `Please Open This URL ${URL} and change your password`,
     };
 
     emailjs
@@ -28,6 +40,7 @@ function ForgotPassword() {
         (result) => {
           console.log(result.text);
           alert("Please Check Your Email");
+          navigate("/Login");
         },
         (error) => {
           console.log(error.text);
@@ -39,13 +52,13 @@ function ForgotPassword() {
     <section>
       <div className="container mx-auto py-10 block">
         <h1 className="text-center font-bold text-2xl uppercase">
-          Input Your Email
+          Masukan NIM Anda
         </h1>
         <form onSubmit={sendEmail} className="text-center my-5 space-y-4">
           <div className="mt-10">
             <input
-              ref={email}
-              type="email"
+              ref={nim}
+              type="text"
               name="user_email"
               className="border-solid border-2 border-indigo-600"
             />

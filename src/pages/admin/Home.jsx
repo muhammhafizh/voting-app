@@ -1,16 +1,54 @@
 import { storage } from "../../firebase/Firebase";
 import { ref, deleteObject } from "firebase/storage";
 import { useMutation, useSubscription } from "@apollo/client";
-import { DELETE_PASLON_DATA, SUBSCRIBE_PASLON } from "../../apollo/Paslon";
+import {
+  DELETE_PASLON_DATA,
+  GET_PASLON_IN_VOTING,
+  INSERT_PASLON_IN_VOTING,
+  SUBSCRIBE_PASLON,
+} from "../../apollo/Paslon";
 import updateIcon from "../../assets/update.svg";
 import deleteIcon from "../../assets/delete.svg";
+import checkListIcon from "../../assets/Checkmark.svg";
 import { Link } from "react-router-dom";
 import swal from "sweetalert";
+import { MAHASISWA_ID } from "../../apollo/User";
 
 function HomePage() {
   const { data, loading } = useSubscription(SUBSCRIBE_PASLON);
   const [deletePaslon, { loading: loadingDelete }] =
     useMutation(DELETE_PASLON_DATA);
+  const [insertInVoting] = useMutation(INSERT_PASLON_IN_VOTING);
+  const { data: dataMahasiswa } = useSubscription(MAHASISWA_ID);
+  const { data: dataPaslonInVoting } = useSubscription(GET_PASLON_IN_VOTING);
+
+  const dataPaslon = [];
+  dataPaslonInVoting?.mini_project_voting?.map((dt) => {
+    dataPaslon.push(dt.paslon_id);
+  });
+
+  const handleSave = async (idPsln, jnspsln) => {
+    const newData = [];
+
+    dataMahasiswa?.mini_project_users?.map((dt) => {
+      newData.push({
+        isUserVoted: false,
+        paslon_id: idPsln,
+        user_id: dt.id,
+        status_paslon: jnspsln,
+      });
+    });
+
+    const objectsData = {
+      newData,
+    };
+
+    insertInVoting({
+      variables: {
+        objects: objectsData.newData,
+      },
+    });
+  };
 
   const handleDelete = async (deleteImage, deleteID) => {
     swal({
@@ -71,7 +109,7 @@ function HomePage() {
                   <div className="p-6" key={paslon.id}>
                     <span className="py-1 uppercase text-gray-500 font-bold">
                       total voting{" "}
-                      <span className="ml-2">{paslon.total_voted}</span>
+                      <span className="ml-2">{paslon.total_vote}</span>
                     </span>
                     <div className="flex mt-3">
                       <Link to={`/Admin/UpdateCandidate/${paslon.id}`}>
@@ -91,6 +129,17 @@ function HomePage() {
                       >
                         <img src={deleteIcon} className="mx-auto" />
                       </button>
+                      {dataPaslon.includes(paslon.id) === false && (
+                        <button
+                          onClick={() =>
+                            handleSave(paslon.id, paslon.jenis_paslon)
+                          }
+                          type="button"
+                          className="inline-block rounded-full bg-green-300 leading-normal shadow-md hover:bg-green-700 hover:shadow-lg focus:bg-green-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-800 active:shadow-lg transition duration-150 ease-in-out w-9 h-9 ml-4"
+                        >
+                          <img src={checkListIcon} className="mx-auto p-2" />
+                        </button>
+                      )}
                     </div>
                   </div>
                 </div>
